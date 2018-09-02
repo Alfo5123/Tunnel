@@ -15,6 +15,8 @@ var loop;
 var screenWidth = window.innerWidth;
 var screenHeight = window.innerHeight;
 var stepSize = 100;
+var myMusic;
+
 //localStorage.getItem('highscore')
 
 //puts element on specified coardinate
@@ -106,6 +108,21 @@ function uiSet(state) {
   }
 }
 
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }    
+}
+
 //program start
 function init() {
   uiSet("start");
@@ -113,6 +130,8 @@ function init() {
 //game start
 function gameStart() {
   uiSet("none");
+  myMusic = new sound("audio/Omniworld.mp3");
+  myMusic.play();
   gameLoop();
   scoreCounter.innerHTML = "0";
 }
@@ -120,6 +139,7 @@ function gameStart() {
 function gameEnd() {
   uiSet("end");
   clearInterval(loop);
+  myMusic.stop()
   rockets = document.getElementsByClassName("rocket");
   var i = rockets.length - 1;
   while (i--) {

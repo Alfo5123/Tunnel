@@ -1,9 +1,9 @@
 
 #ship {
-  background-image: url("https://png.icons8.com/color/40/000000/space-shuttle.png");
+  background-image: url("https://png.icons8.com/metro/40/000000/wasp.png");
   width: 40px;
   height: 40px;
-  border-radius: 100px;
+  border-radius: 5px;
   position: absolute;
 }
 .rocket {
