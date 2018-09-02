@@ -14,7 +14,7 @@ var score;
 var loop;
 var screenWidth = window.innerWidth;
 var screenHeight = window.innerHeight;
-var stepSize = 15;
+var stepSize = 100;
 //localStorage.getItem('highscore')
 
 //puts element on specified coardinate
@@ -65,9 +65,15 @@ function collided(el1, el2) {
 }
 
 // make rocket
-function makeDiv(id, text, cl) {
+function makeDiv(id, text, cl, type) {
   var el;
   el = document.createElement("div");
+
+  // Change color according to difficulty
+  if ( type == 1 ){
+    el.style.setProperty('background-color', '#000');
+  }
+
   el.innerHTML = text;
   el.id = id;
   el.className = cl;
@@ -82,13 +88,15 @@ function uiSet(state) {
     ui.style.display = "block";
     playButton.innerHTML = "PLAY";
     uiScore.innerHTML = "";
-    uiText.innerHTML = "ASTEROID</br>DODGE";
+    uiText.style.fontSize = (screenHeight / 150) + 'em';
+    uiText.innerHTML = "Tunnel";
     highscoreHolder.style.display = "none"
   }
   if (state == "end") {
     ui.style.display = "block";
     playButton.innerHTML = "RETRY";
     uiScore.innerHTML = "Score: " + score;
+    uiText.style.fontSize = (screenHeight / 200) + 'em';
     uiText.innerHTML = "GAME OVER";
     highscoreHolder.style.display = "block"
   }
@@ -121,8 +129,30 @@ function gameEnd() {
      localStorage.setItem('highscore', score + "")
       
      }
-  highscoreHolder.innerHTML = "Your Highscore: " + localStorage.getItem('highscore')
+  highscoreHolder.innerHTML = "Personal Best: " + localStorage.getItem('highscore')
 }
+
+// Movement keystroke
+var Keys = {
+        up: false,
+        down: false
+    };
+
+window.onkeydown = function(e) {
+    var kc = e.keyCode;
+    e.preventDefault();
+
+    if (kc === 38) Keys.up = true;    // so check exclusively
+    else if (kc === 40) Keys.down = true;
+};
+
+window.onkeyup = function(e) {
+    var kc = e.keyCode;
+    e.preventDefault();
+
+    if (kc === 38) Keys.up = false;
+    else if (kc === 40) Keys.down = false;
+};
 
 // gameLoop
 function gameLoop() {
@@ -130,6 +160,21 @@ function gameLoop() {
   var i = 0;
   var speed = 0;
   loop = setInterval(function() {
+
+    curX = ship.offsetLeft;
+    curY = ship.offsetTop;
+
+    if (Keys.up) {
+      if (curY > screenHeight / stepSize) {
+       put(curX, curY - screenHeight / stepSize, ship);
+      }
+    }
+    else if (Keys.down) {  // both up and down does not work so check excl.
+      if (curY < screenHeight - Math.max(40,screenHeight / stepSize) ) {
+        put(curX, curY + screenHeight / stepSize, ship);
+      }
+    }
+
     i++;
     for (x = 0; x < rockets.length; x++) {
       rockets[x].style.left = rockets[x].offsetLeft - (5 + speed) + "px";
@@ -156,7 +201,11 @@ function gameLoop() {
     }
     // every 1/3 of a sec
     if (i % 19 === 0 && i !== 0) {
-      makeDiv("id", "", "rocket");
+      if (i % 2 == 0 ){
+        makeDiv("id", "", "rocket", 0 );
+      } else {
+        makeDiv("id", "", "rocket", 1)
+      }
     }
   }, 16);
 }
@@ -164,27 +213,9 @@ function gameLoop() {
 //execution
 //movement of ship
 playButton.addEventListener("click", function() {
+
   gameStart();
 });
 
-document.addEventListener("keydown", function(e) {
-  curX = ship.offsetLeft;
-  curY = ship.offsetTop;
-
-  //down
-  if (e.keyCode == "40") {
-    if (ship.offsetTop < screenHeight - screenHeight / stepSize) {
-      put(curX, curY + screenHeight / stepSize, ship);
-    }
-  }
-
-  //up
-  if (e.keyCode == "38") {
-    if (ship.offsetTop > screenHeight / stepSize) {
-      put(curX, curY - screenHeight / stepSize, ship);
-    }
-  }
-});
 
 init();
-
