@@ -29,13 +29,13 @@ As Douglas Horton once said:
 
 ## Brainstorm
 
-- [ ] Assign different sizes and colors to the dots
+- [x] Assign different sizes and colors to the dots
 - [ ] Add obstacles based on gravity changes, speed variations and variations of the tunnel width.
 - [ ] Develop an adaptive mechanism for level generation of obstacles
-- [ ] Keep a counter for the cumulative score
-- [ ] Allow objects to accelerate (possibly at the end of the level)
+- [x] Keep a counter for the cumulative score
+- [x] Allow objects to accelerate (possibly at the end of the level)
 - [ ] Generate levels from a database but adapt the obstacles according to the gameplay. 
-- [ ] The only controls available are `up` and `down`. 
+- [x] The only controls available are `up` and `down`. 
 - [ ] If the player hits the obstactles, it can result in points penalty, or sudden game over. 
 - [ ] Experiment with different obstacle geometries (rounded ones would be easier, I suspect)
 - [ ] Play with light conditions (the closer we are to lightsource the slower we move)
