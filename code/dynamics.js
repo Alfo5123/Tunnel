@@ -210,10 +210,15 @@ function gameLoop() {
   }, 16);
 }
 
+
+//function fadeOut(el){el.style.opacity=1;(function fade(){if((el.style.opacity-=.1)<0){el.style.display="none";}else{requestAnimationFrame(fade);}})();}
 //execution
 //movement of ship
-playButton.addEventListener("click", function() {
 
+
+playButton.addEventListener("click", function() {
+  //Preview Display
+  //Fade out Progress Bar
   gameStart();
 });
 
