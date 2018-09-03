@@ -1,5 +1,5 @@
 //vars
-var ship = document.getElementById("ship");
+var wasp = document.getElementById("wasp");
 var scoreCounter = document.getElementById("score");
 var rockets = document.getElementsByClassName("rocket");
 var ui = document.getElementById("ui");
@@ -10,6 +10,7 @@ var highscoreHolder = document.getElementById("highscore")
 if(localStorage.getItem('highscore') === null){
    localStorage.setItem('highscore', '0')
    }
+
 var score;
 var loop;
 var screenWidth = window.innerWidth;
@@ -19,13 +20,13 @@ var myMusic;
 
 //localStorage.getItem('highscore')
 
-//puts element on specified coardinate
+//Locate elements on specified coordinates
 function put(x, y, el) {
   el.style.top = y + "px";
   el.style.left = x + "px";
 }
 
-//colision
+//Object collision
 function collided(el1, el2) {
   //el1 info
   var one = {};
@@ -66,12 +67,14 @@ function collided(el1, el2) {
   }
 }
 
-// make rocket
-function makeDiv(id, text, cl, type) {
+// Create obstacles / points
+function makeDiv(id, text, cl, type) 
+{
   var el;
   el = document.createElement("div");
+  el.type = type
 
-  // Change color according to difficulty
+  // Change color/value according to type
   if ( type == 1 ){
     el.style.setProperty('background-color', '#000');
   }
@@ -108,7 +111,9 @@ function uiSet(state) {
   }
 }
 
-function sound(src) {
+// Function to make background music work
+function sound(src) 
+{
     this.sound = document.createElement("audio");
     this.sound.src = src;
     this.sound.setAttribute("preload", "auto");
@@ -123,10 +128,11 @@ function sound(src) {
     }    
 }
 
-//program start
+//Start program
 function init() {
   uiSet("start");
 }
+
 //game start
 function gameStart() {
   uiSet("none");
@@ -135,6 +141,7 @@ function gameStart() {
   gameLoop();
   scoreCounter.innerHTML = "0";
 }
+
 //game end
 function gameEnd() {
   uiSet("end");
@@ -158,15 +165,18 @@ var Keys = {
         down: false
     };
 
-window.onkeydown = function(e) {
+//Keystroke pressing functions
+window.onkeydown = function(e) 
+{
     var kc = e.keyCode;
     e.preventDefault();
 
-    if (kc === 38) Keys.up = true;    // so check exclusively
+    if (kc === 38) Keys.up = true;    
     else if (kc === 40) Keys.down = true;
 };
 
-window.onkeyup = function(e) {
+window.onkeyup = function(e) 
+{
     var kc = e.keyCode;
     e.preventDefault();
 
@@ -174,24 +184,26 @@ window.onkeyup = function(e) {
     else if (kc === 40) Keys.down = false;
 };
 
-// gameLoop
-function gameLoop() {
+// Main game loop
+function gameLoop() 
+{
   score = 0;
   var i = 0;
   var speed = 0;
-  loop = setInterval(function() {
-
-    curX = ship.offsetLeft;
-    curY = ship.offsetTop;
+  loop = setInterval(function() 
+  {
+    // Current wasp coordiantes
+    curX = wasp.offsetLeft;
+    curY = wasp.offsetTop;
 
     if (Keys.up) {
       if (curY > screenHeight / stepSize) {
-       put(curX, curY - screenHeight / stepSize, ship);
+       put(curX, curY - screenHeight / stepSize, wasp);
       }
     }
     else if (Keys.down) {  // both up and down does not work so check excl.
       if (curY < screenHeight - Math.max(40,screenHeight / stepSize) ) {
-        put(curX, curY + screenHeight / stepSize, ship);
+        put(curX, curY + screenHeight / stepSize, wasp);
       }
     }
 
@@ -199,16 +211,20 @@ function gameLoop() {
     for (x = 0; x < rockets.length; x++) {
       rockets[x].style.left = rockets[x].offsetLeft - (5 + speed) + "px";
 
-      // when rockets colide with ship
-      if (collided(rockets[x], ship) == "hit") {
-        gameEnd();
+      // when rockets colide with wasp
+      if (collided(rockets[x], wasp) == "hit"  ) {
+        if (rockets[x].type == 1) {
+          gameEnd();
+        }
+        else{
+          document.body.removeChild(rockets[x]);
+          score = score + 5 ;
+          scoreCounter.innerHTML = score;
+        }
       }
       //remove unseen rockets
-      //adds score
       if (rockets[x].offsetLeft < 0) {
         document.body.removeChild(rockets[x]);
-        score++;
-        scoreCounter.innerHTML = score;
       }
     }
     //every second
@@ -231,9 +247,9 @@ function gameLoop() {
 }
 
 
-//function fadeOut(el){el.style.opacity=1;(function fade(){if((el.style.opacity-=.1)<0){el.style.display="none";}else{requestAnimationFrame(fade);}})();}
+
 //execution
-//movement of ship
+//movement of wasp
 
 
 playButton.addEventListener("click", function() {
