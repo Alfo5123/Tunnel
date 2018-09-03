@@ -6,12 +6,22 @@
   border-radius: 5px;
   position: absolute;
 }
-.rocket {
-  background-color: #8c8c8c;
+
+.object {
   width: 30px;
   height: 30px;
-  border-radius: 100px;
   position: absolute;
+}
+
+.point {
+  background-color: #FFF;
+  background-image:url("images/bee30.png");
+}
+
+.enemy {
+  background-color:#000;
+  background-image: none;
+  border-radius: 100px;
 }
 
 body {

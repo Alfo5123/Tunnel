@@ -1,7 +1,7 @@
 //vars
 var wasp = document.getElementById("wasp");
 var scoreCounter = document.getElementById("score");
-var rockets = document.getElementsByClassName("rocket");
+var objects = document.getElementsByClassName("object");
 var ui = document.getElementById("ui");
 var uiText = document.getElementById("text");
 var uiScore = document.getElementById("uiScore");
@@ -69,17 +69,10 @@ function collided(el1, el2) {
 }
 
 // Create obstacles / points
-function makeDiv(id, text, cl, type) 
+function makeDiv(id, text, cl) 
 {
   var el;
   el = document.createElement("div");
-  el.type = type
-
-  // Change color/value according to type
-  if ( type == 1 ){
-    el.style.setProperty('background-color', '#000');
-  }
-
   el.innerHTML = text;
   el.id = id;
   el.className = cl;
@@ -149,10 +142,10 @@ function gameEnd() {
   gameoff = true;
   clearInterval(loop);
   myMusic.stop()
-  rockets = document.getElementsByClassName("rocket");
-  var i = rockets.length - 1;
+  objects = document.getElementsByClassName("object");
+  var i = objects.length - 1;
   while (i--) {
-    document.body.removeChild(rockets[i]);
+    document.body.removeChild(objects[i]);
   }
   if(parseInt(localStorage.getItem('highscore')) < score){
      localStorage.setItem('highscore', score + "")
@@ -216,23 +209,23 @@ function gameLoop()
     }
 
     i++;
-    for (x = 0; x < rockets.length; x++) {
-      rockets[x].style.left = rockets[x].offsetLeft - (5 + speed) + "px";
+    for (x = 0; x < objects.length; x++) {
+      objects[x].style.left = objects[x].offsetLeft - (5 + speed) + "px";
 
-      // when rockets colide with wasp
-      if (collided(rockets[x], wasp) == "hit"  ) {
-        if (rockets[x].type == 1) {
+      // when objects colide with wasp
+      if (collided(objects[x], wasp) == "hit"  ) {
+        if (objects[x].className == "object enemy") {
           gameEnd();
         }
         else{
-          document.body.removeChild(rockets[x]);
+          document.body.removeChild(objects[x]);
           score = score + 5 ;
           scoreCounter.innerHTML = score;
         }
       }
-      //remove unseen rockets
-      if (rockets[x].offsetLeft < 0) {
-        document.body.removeChild(rockets[x]);
+      //remove unseen objects
+      if (objects[x].offsetLeft < 0) {
+        document.body.removeChild(objects[x]);
       }
     }
     //every second
@@ -246,14 +239,15 @@ function gameLoop()
     // every 1/3 of a sec
     if (i % 19 === 0 && i !== 0) {
       if (i % 2 == 0 ){
-        makeDiv("id", "", "rocket", 0 );
+        // Points
+        makeDiv("id", "", "object point");
       } else {
-        makeDiv("id", "", "rocket", 1)
+        //Enemies
+        makeDiv("id", "", "object enemy")
       }
     }
   }, 16);
 }
-
 
 
 //execution
