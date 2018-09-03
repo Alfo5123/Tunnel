@@ -17,6 +17,7 @@ var screenWidth = window.innerWidth;
 var screenHeight = window.innerHeight;
 var stepSize = 100;
 var myMusic;
+var gameoff = true ;
 
 //localStorage.getItem('highscore')
 
@@ -145,6 +146,7 @@ function gameStart() {
 //game end
 function gameEnd() {
   uiSet("end");
+  gameoff = true;
   clearInterval(loop);
   myMusic.stop()
   rockets = document.getElementsByClassName("rocket");
@@ -182,6 +184,12 @@ window.onkeyup = function(e)
 
     if (kc === 38) Keys.up = false;
     else if (kc === 40) Keys.down = false;
+    else if(e.keyCode == 32){ 
+      if (gameoff){
+        gameStart();
+        gameoff = false;
+      }
+    };
 };
 
 // Main game loop
@@ -251,11 +259,11 @@ function gameLoop()
 //execution
 //movement of wasp
 
-
 playButton.addEventListener("click", function() {
-  //Preview Display
-  //Fade out Progress Bar
-  gameStart();
+  if (gameoff){
+    gameStart();
+    gameoff = false;
+  }
 });
 
 
