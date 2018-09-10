@@ -14,29 +14,25 @@
 }
 
 .point {
-  background-color: #FFF;
+  background-color: none;
   background-image:url("images/hex30.png");
 }
 
 .enemy {
-  background-color:#000;
+  background-color: #A50021;
   background-image: none;
   border-radius: 100px;
 }
 
 body {
   overflow: hidden;
-  background-color: #FFFFFF;
-  animation: fadein 2s;
-    -moz-animation: fadein 2s; /* Firefox */
-    -webkit-animation: fadein 2s; /* Safari and Chrome */
-    -o-animation: fadein 2s; /* Opera */
-
+  background-color: #FFFFFF; /* For restart */
 }
-@keyframes fadein {from { opacity:0; } to { opacity:1;}}
-@-moz-keyframes fadein { /* Firefox */ from { opacity:0;}to {opacity:1;}}
-@-webkit-keyframes fadein { /* Safari and Chrome */ from { opacity:0;}to {opacity:1;}}
-@-o-keyframes fadein { /* Opera */ from { opacity:0; } to { opacity: 1; }}
+
+@keyframes fadein {from { opacity:0.1; } to { opacity:1;}}
+@-moz-keyframes fadein { /* Firefox */ from { opacity:0.1;}to {opacity:1;}}
+@-webkit-keyframes fadein { /* Safari and Chrome */ from { opacity:0.1;}to {opacity:1;}}
+@-o-keyframes fadein { /* Opera */ from { opacity:0.1; } to { opacity: 1; }}
 
 
 #ui {
@@ -46,7 +42,25 @@ body {
   width: 100%;
   height: 100%;
   z-index: 100;
-  background: radial-gradient(#FFFFFF, #000000 );
+
+  animation: fadein 2.5s;
+    -moz-animation: fadein 2.5s; /* Firefox */
+    -webkit-animation: fadein 2.5s; /* Safari and Chrome */
+    -o-animation: fadein 2.5s; /* Opera */
+
+  background: 
+    /* top, transparent red */ 
+    radial-gradient(
+      rgba(255, 255, 255, 0.1), 
+      rgba(100, 100, 100, 0.1)
+    ),
+    /* bottom, image */
+    url("images/tunnel.jpg");
+
+  background-repeat: no-repeat;
+  background-position: center; 
+  background-attachment: fixed;
+  background-size: cover;
   text-align: center;
 }
 
@@ -84,9 +98,9 @@ body {
   text-align: center;
   font-size: 3em;
   font-family: 'Lato', sans-serif;
-  color: #151515;
+  color: #000;
   font-weight: bold;
-  z-index: 50;
+  z-index: 20;
 }
 #highscore{
   z-index: 150;

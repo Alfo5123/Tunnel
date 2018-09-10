@@ -84,6 +84,8 @@ function makeDiv(id, text, cl)
 //ui
 function uiSet(state) {
   if (state == "start") {
+    scoreCounter.style.display = "none";
+    wasp.style.display = "none";
     ui.style.display = "block";
     playButton.innerHTML = "PLAY";
     uiScore.innerHTML = "";
@@ -101,7 +103,9 @@ function uiSet(state) {
   }
   if (state == "none") {
     ui.style.display = "none";
-    highscoreHolder.style.display = "none"
+    highscoreHolder.style.display = "none";
+    scoreCounter.style.display = "block";
+    wasp.style.display = "block";
   }
 }
 
@@ -132,8 +136,9 @@ function gameStart() {
   uiSet("none");
   myMusic = new sound("audio/Omniworld.mp3");
   myMusic.play();
+  document.body.style.backgroundColor =  'rgba(90,90,90,1)'; // Reset color of screen
   gameLoop();
-  scoreCounter.innerHTML = "0";
+  scoreCounter.innerHTML = "0"; // Reset counter
 }
 
 //game end
@@ -177,7 +182,7 @@ window.onkeyup = function(e)
 
     if (kc === 38) Keys.up = false;
     else if (kc === 40) Keys.down = false;
-    else if(e.keyCode == 32){ 
+    else if(e.keyCode == 32){ // Press spacebar
       if (gameoff){
         gameStart();
         gameoff = false;
@@ -218,9 +223,11 @@ function gameLoop()
           gameEnd();
         }
         else{
+          // add points
           document.body.removeChild(objects[x]);
           score = score + 5 ;
           scoreCounter.innerHTML = score;
+          document.body.style.backgroundColor =  'rgba(90,90,90,' + (1-0.7*score/60) + ')';
         }
       }
       //remove unseen objects
@@ -228,7 +235,7 @@ function gameLoop()
         document.body.removeChild(objects[x]);
       }
     }
-    //every second
+    //accelerate objects every second
     if (i == 60) {
       i = 0;
       if (speed < 35) {
@@ -238,7 +245,7 @@ function gameLoop()
     }
     // every 1/3 of a sec
     if (i % 19 === 0 && i !== 0) {
-      if (i % 2 == 0 ){
+      if (i % 3 == 0 ){
         // Points
         makeDiv("id", "", "object point");
       } else {
