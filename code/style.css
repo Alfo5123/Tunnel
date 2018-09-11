@@ -19,9 +19,14 @@
 }
 
 .enemy {
-  background-color: #A50021;
+  /*background-color: #A50021;
   background-image: none;
-  border-radius: 100px;
+  border-radius: 100px*/
+  display: block;
+  background: black;
+  border-radius: 50%;
+  margin: 0;
+  background: radial-gradient(circle at 30px 30px, #99cc33, #000);
 }
 
 body {
