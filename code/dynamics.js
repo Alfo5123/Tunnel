@@ -136,7 +136,7 @@ function gameStart() {
   uiSet("none");
   myMusic = new sound("audio/Omniworld.mp3");
   myMusic.play();
-  document.body.style.backgroundColor =  'rgba(90,90,90,1)'; // Reset color of screen
+  //document.body.style.backgroundColor =  'rgba(135,93,61,1)'; // Reset color of screen
   gameLoop();
   scoreCounter.innerHTML = "0"; // Reset counter
 }
@@ -227,7 +227,7 @@ function gameLoop()
           document.body.removeChild(objects[x]);
           score = score + 5 ;
           scoreCounter.innerHTML = score;
-          document.body.style.backgroundColor =  'rgba(90,90,90,' + (1-0.7*score/60) + ')';
+          //document.body.style.backgroundColor =  'rgba(135,93,61,' + (1-0.7*score/60) + ')';
         }
       }
       //remove unseen objects
@@ -253,7 +253,7 @@ function gameLoop()
         makeDiv("id", "", "object enemy")
       }
     }
-  }, 16);
+  }, 15);
 }
 
 

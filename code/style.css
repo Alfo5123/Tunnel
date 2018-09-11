@@ -26,7 +26,10 @@
 
 body {
   overflow: hidden;
-  background-color: #FFFFFF; /* For restart */
+  background-image: url("images/tunnel.jpg");
+  background-size: auto;
+  /*background-size: cover;
+  /*background-color: #FFFFFF; /* For restart */
 }
 
 @keyframes fadein {from { opacity:0.1; } to { opacity:1;}}
