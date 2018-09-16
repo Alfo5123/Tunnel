@@ -13,8 +13,11 @@ if(localStorage.getItem('highscore') === null){
 
 var score;
 var loop;
+
 var screenWidth = window.innerWidth;
 var screenHeight = window.innerHeight;
+var scoreHeight = scoreCounter.offsetHeight;
+
 var stepSize = 100;
 var myMusic;
 var gameoff = true ;
@@ -77,7 +80,7 @@ function makeDiv(id, text, cl)
   el.id = id;
   el.className = cl;
   document.body.appendChild(el);
-  el.style.top = Math.floor(Math.random() * screenHeight) + "px";
+  el.style.top = ( Math.floor(Math.random() * ( screenHeight - scoreHeight) ) + scoreHeight ) + "px";
   el.style.left = screenWidth + "px";
 }
 
@@ -203,12 +206,12 @@ function gameLoop()
     curY = wasp.offsetTop;
 
     if (Keys.up) {
-      if (curY > screenHeight / stepSize) {
-       put(curX, curY - screenHeight / stepSize, wasp);
+      if (curY > screenHeight / stepSize + scoreHeight ) {
+       put(curX, curY - screenHeight / stepSize , wasp);
       }
     }
     else if (Keys.down) {  // both up and down does not work so check excl.
-      if (curY < screenHeight - Math.max(40,screenHeight / stepSize) ) {
+      if (curY < screenHeight - Math.max(45,screenHeight / stepSize) ) {
         put(curX, curY + screenHeight / stepSize, wasp);
       }
     }
@@ -253,7 +256,7 @@ function gameLoop()
         makeDiv("id", "", "object enemy")
       }
     }
-  }, 15);
+  }, 16);
 }
 
 
