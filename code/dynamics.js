@@ -22,6 +22,8 @@ var stepSize = 100;
 var myMusic;
 var gameoff = true ;
 
+var level = 1 ;
+
 //localStorage.getItem('highscore')
 
 //Locate elements on specified coordinates
@@ -104,6 +106,14 @@ function uiSet(state) {
     uiText.innerHTML = "GAME OVER";
     highscoreHolder.style.display = "block"
   }
+  if (state == "win") {
+    ui.style.display = "block";
+    playButton.innerHTML = "Level " + level;
+    uiScore.innerHTML = "Score: " + score;
+    uiText.style.fontSize = (screenHeight / 200) + 'em';
+    uiText.innerHTML = "You Won!";
+    highscoreHolder.style.display = "block"
+  }
   if (state == "none") {
     ui.style.display = "none";
     highscoreHolder.style.display = "none";
@@ -145,8 +155,15 @@ function gameStart() {
 }
 
 //game end
-function gameEnd() {
-  uiSet("end");
+function gameEnd(defeat = true) {
+
+  // Set screen depending on result
+  if (defeat){
+    uiSet("end");
+  }else{
+    uiSet("win");
+  }
+
   gameoff = true;
   clearInterval(loop);
   myMusic.stop()
@@ -218,18 +235,23 @@ function gameLoop()
 
     i++;
     for (x = 0; x < objects.length; x++) {
-      objects[x].style.left = objects[x].offsetLeft - (5 + speed) + "px";
+      objects[x].style.left = objects[x].offsetLeft - (5*level + speed) + "px";
 
       // when objects colide with wasp
       if (collided(objects[x], wasp) == "hit"  ) {
         if (objects[x].className == "object enemy") {
-          gameEnd();
+          level = 1;
+          gameEnd(defeat = true);
         }
         else{
           // add points
           document.body.removeChild(objects[x]);
           score = score + 5 ;
           scoreCounter.innerHTML = score;
+          if (score == 60){
+            level = level + 1 ;
+            gameEnd(defeat = false);
+          }
           //document.body.style.backgroundColor =  'rgba(135,93,61,' + (1-0.7*score/60) + ')';
         }
       }
