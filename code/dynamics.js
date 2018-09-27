@@ -1,6 +1,7 @@
 //vars
 var wasp = document.getElementById("wasp");
 var scoreCounter = document.getElementById("score");
+var levelCounter = document.getElementById("level");
 var objects = document.getElementsByClassName("object");
 var ui = document.getElementById("ui");
 var uiText = document.getElementById("text");
@@ -13,16 +14,20 @@ if(localStorage.getItem('highscore') === null){
 
 var score;
 var loop;
+var myMusic;
 
+// Set dimensions
 var screenWidth = window.innerWidth;
 var screenHeight = window.innerHeight;
 var scoreHeight = scoreCounter.offsetHeight;
 
-var stepSize = 100;
-var myMusic;
-var gameoff = true ;
+// Start level counter
+levelCounter.style.visibility = "hidden";
+var current_level = 1 ;
 
-var level = 1 ;
+
+var stepSize = 100;
+var gameoff = true ;
 
 //localStorage.getItem('highscore')
 
@@ -108,7 +113,7 @@ function uiSet(state) {
   }
   if (state == "win") {
     ui.style.display = "block";
-    playButton.innerHTML = "Level " + level;
+    playButton.innerHTML = "Level " + current_level;
     uiScore.innerHTML = "Score: " + score;
     uiText.style.fontSize = (screenHeight / 200) + 'em';
     uiText.innerHTML = "You Won!";
@@ -117,7 +122,9 @@ function uiSet(state) {
   if (state == "none") {
     ui.style.display = "none";
     highscoreHolder.style.display = "none";
+    scoreCounter.style.visibility = "visible";
     scoreCounter.style.display = "block";
+    levelCounter.style.visibility = "visible";
     wasp.style.display = "block";
   }
 }
@@ -152,10 +159,14 @@ function gameStart() {
   //document.body.style.backgroundColor =  'rgba(135,93,61,1)'; // Reset color of screen
   gameLoop();
   scoreCounter.innerHTML = "0"; // Reset counter
+  levelCounter.innerHTML = "Level " + current_level
 }
 
 //game end
 function gameEnd(defeat = true) {
+
+  levelCounter.style.visibility = "hidden";
+  scoreCounter.style.visibility = "hidden";
 
   // Set screen depending on result
   if (defeat){
@@ -235,12 +246,13 @@ function gameLoop()
 
     i++;
     for (x = 0; x < objects.length; x++) {
-      objects[x].style.left = objects[x].offsetLeft - (5*level + speed) + "px";
+      // Smooth accerleration depending on current_level
+      objects[x].style.left = objects[x].offsetLeft - (5*(Math.floor(current_level/5)+1) + speed) + "px";
 
       // when objects colide with wasp
       if (collided(objects[x], wasp) == "hit"  ) {
         if (objects[x].className == "object enemy") {
-          level = 1;
+          current_level = 1;
           gameEnd(defeat = true);
         }
         else{
@@ -249,7 +261,7 @@ function gameLoop()
           score = score + 5 ;
           scoreCounter.innerHTML = score;
           if (score == 60){
-            level = level + 1 ;
+            current_level = current_level + 1 ;
             gameEnd(defeat = false);
           }
           //document.body.style.backgroundColor =  'rgba(135,93,61,' + (1-0.7*score/60) + ')';
