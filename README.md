@@ -24,8 +24,9 @@ As Douglas Horton once said:
 
 ## Authors
 
- - [Gerson Lázaro](https://gersonlazaro.com/)
  - [Alfredo de la Fuente](https://alfo5123.github.io/)
+ - [Sushanti Prabhu](https://www.facebook.com/sushanti.prabhu)
+ - [Gerson Lázaro](https://gersonlazaro.com/)
 
 ## Brainstorm
 
@@ -47,6 +48,7 @@ As Douglas Horton once said:
 
 ```
 git clone https://github.com/Alfo5123/Tunnel.git
+cd Tunnel 
 ```
 
 ## Licenses
