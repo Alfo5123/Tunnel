@@ -12,7 +12,7 @@ if(localStorage.getItem('highscore') === null){
    localStorage.setItem('highscore', '0')
    }
 
-var score;
+// Set soundtrack
 var loop;
 var myMusic;
 
@@ -25,11 +25,20 @@ var scoreHeight = scoreCounter.offsetHeight;
 levelCounter.style.visibility = "hidden";
 var current_level = 1 ;
 
+// Define step size for movement
+var numSteps = 100; // Based on the size of the full screen
+var stepSize = Math.round(screenHeight / numSteps) 
+var extra = ( screenHeight - scoreHeight - wasp.offsetHeight ) % stepSize
 
-var stepSize = 100;
+// Set game variables
+var score;
 var gameoff = true ;
-
 //localStorage.getItem('highscore')
+
+// Keep track of position distribution
+var positions = ( screenHeight - scoreHeight - wasp.offsetHeight - extra )  / stepSize  + 1 
+var postDist = new Array( positions ).fill(0);
+var entropy;
 
 //Locate elements on specified coordinates
 function put(x, y, el) {
@@ -78,6 +87,22 @@ function collided(el1, el2) {
   }
 }
 
+// Entropy calculation
+function EntropyCalculation( postDist, num )
+{
+
+  function logTerm(total, value, index, array) 
+  {
+    if ( value == 0 ){
+      return total
+    }
+
+    return total + value * ( Math.log(num) - Math.log(value) );
+  }
+
+  return postDist.reduceRight(logTerm) / num ;
+}
+
 // Create obstacles / points
 function makeDiv(id, text, cl) 
 {
@@ -87,7 +112,7 @@ function makeDiv(id, text, cl)
   el.id = id;
   el.className = cl;
   document.body.appendChild(el);
-  el.style.top = ( Math.floor(Math.random() * ( screenHeight - scoreHeight) ) + scoreHeight ) + "px";
+  el.style.top = ( Math.floor(Math.random() * ( screenHeight - scoreHeight) ) + scoreHeight ) + "px"; // Only considers the center coordinates
   el.style.left = screenWidth + "px";
 }
 
@@ -151,15 +176,20 @@ function init() {
   uiSet("start");
 }
 
-//game start
+// Game start
 function gameStart() {
   uiSet("none");
+
+  // Start music 
   myMusic = new sound("audio/Omniworld.mp3");
   myMusic.play();
   //document.body.style.backgroundColor =  'rgba(135,93,61,1)'; // Reset color of screen
+
+  put(wasp.offsetLeft, scoreHeight, wasp)
   gameLoop();
   scoreCounter.innerHTML = "0"; // Reset counter
   levelCounter.innerHTML = "Level " + current_level
+  
 }
 
 //game end
@@ -186,7 +216,7 @@ function gameEnd(defeat = true) {
   if(parseInt(localStorage.getItem('highscore')) < score){
      localStorage.setItem('highscore', score + "")
       
-     }
+  }
   highscoreHolder.innerHTML = "Personal Best: " + localStorage.getItem('highscore')
 }
 
@@ -224,23 +254,26 @@ window.onkeyup = function(e)
 // Main game loop
 function gameLoop() 
 {
-  score = 0;
-  var i = 0;
-  var speed = 0;
+  score = 0; // to keep track of user score
+  var i = 0; // to keep track of time
+  var j = 0; // to keep track of entropy calculation time
+  var speed = 0; // to keep track of objects velocity
   loop = setInterval(function() 
   {
     // Current wasp coordiantes
     curX = wasp.offsetLeft;
     curY = wasp.offsetTop;
 
+    //console.log( (curY - scoreHeight) / stepSize , postDist[ (curY - scoreHeight) / stepSize ]  ) ;
+
     if (Keys.up) {
-      if (curY > screenHeight / stepSize + scoreHeight ) {
-       put(curX, curY - screenHeight / stepSize , wasp);
+      if (curY > scoreHeight ) {   // limit vertical upward movement by the score banner
+       put(curX, curY - stepSize , wasp);
       }
     }
     else if (Keys.down) {  // both up and down does not work so check excl.
-      if (curY < screenHeight - Math.max(45,screenHeight / stepSize) ) {
-        put(curX, curY + screenHeight / stepSize, wasp);
+      if (curY < screenHeight - Math.max( wasp.offsetHeight + extra , stepSize ))  {
+        put(curX, curY + stepSize, wasp);
       }
     }
 
@@ -253,15 +286,18 @@ function gameLoop()
       if (collided(objects[x], wasp) == "hit"  ) {
         if (objects[x].className == "object enemy") {
           current_level = 1;
+          j = 0 , postDist = new Array( positions ).fill(0) // restart frequencies 
           gameEnd(defeat = true);
         }
         else{
-          // add points
+          // keep playing to add points
           document.body.removeChild(objects[x]);
           score = score + 5 ;
           scoreCounter.innerHTML = score;
-          if (score == 60){
+
+          if (score == 60){ // if maximum score is achieve in level, move to next level
             current_level = current_level + 1 ;
+            j = 0 , postDist = new Array( positions ).fill(0) // restart frequencies 
             gameEnd(defeat = false);
           }
           //document.body.style.backgroundColor =  'rgba(135,93,61,' + (1-0.7*score/60) + ')';
@@ -272,16 +308,28 @@ function gameLoop()
         document.body.removeChild(objects[x]);
       }
     }
+
     //accelerate objects every second
     if (i == 60) {
       i = 0;
       if (speed < 35) {
         speed = speed + 1;
       }
-
     }
     // every 1/3 of a sec
     if (i % 19 === 0 && i !== 0) {
+
+      // Record current position
+      postDist[ (curY - scoreHeight) / stepSize ] += 1
+      j += 1
+
+      // Entropy calculation each 5 seconds
+      if( j == 15){
+        entropy = EntropyCalculation( postDist , j )
+        console.log(entropy)
+        j = 0 , postDist = new Array( positions ).fill(0) // restart frequencies 
+      }
+
       if (i % 3 == 0 ){
         // Points
         makeDiv("id", "", "object point");
@@ -290,6 +338,7 @@ function gameLoop()
         makeDiv("id", "", "object enemy")
       }
     }
+
   }, 16);
 }
 
