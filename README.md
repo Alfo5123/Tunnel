@@ -4,7 +4,6 @@
 - [Description](#description)
 - [Authors](#authors)
 - [Usage](#usage)
-    - [Dependencies](#dependencies)
 - [Improvements](#improvements)
 - [License](#licenses)
 
@@ -28,8 +27,6 @@ As Douglas Horton once said:
  - [Sushanti Prabhu](https://www.facebook.com/sushanti.prabhu)
 
 ## Usage
-
-### Dependencies
 
 ```
 git clone https://github.com/Alfo5123/Tunnel.git
