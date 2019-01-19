@@ -3,20 +3,20 @@
 ## Table of content
 - [Description](#description)
 - [Authors](#authors)
-- [Brainstorm](#brainstorm)
 - [Usage](#usage)
     - [Dependencies](#dependencies)
-- [License](#license)
+- [Improvements](#improvements)
+- [License](#licenses)
 
 ## Description 
 
-The purpose of game is to defy the notion of lazy-dominant-strategy-player type of gamers. The gameplay consists of two well-defined stages. In the first one, the player is offered a fast preview of the distribution of dots across the whole tunnel level. For the second stage, the game starts and the goal is to capture dots in some specific order of priority to get as many cumulative points as possible while reaching the end of the tunnel.  
+We seek to defy the notion of lazy-dominant-strategy-player type of gamers. The goal of the game is to capture as many points as possible while avoiding hitting obstacles, in order to reach alive the end of the tunnel with enough points.  
 
 *Where is the catch? How does it differ from the thousand of games we have played during childhood?*
 
 **Complexity is rewarded**
 
-During the first stage of the game, the player is expected to devise a strategy to complete the tunnel level requirements. However, the second stage includes obstacles that were not shown in the preview and complicate the game based on how the player performs. Thus, if the player seeks for the simple enough strategy that achieves the level requirements with minimum effort, the game will become insanely hard. 
+The game includes obstacles generated based on how the player performs. Thus, if the player aims for the simple enough strategy that achieves the level requirements with minimum effort, the game will become insanely hard. In particular, difficulty increases when either the player is not moving much, or not capturing many points from very beginning. 
 
 As Douglas Horton once said:
 
@@ -26,21 +26,6 @@ As Douglas Horton once said:
 
  - [Alfredo de la Fuente](https://alfo5123.github.io/)
  - [Sushanti Prabhu](https://www.facebook.com/sushanti.prabhu)
- - [Gerson Lázaro](https://gersonlazaro.com/)
-
-## Brainstorm
-
-- [x] Assign different sizes and colors to the dots
-- [ ] Add obstacles based on gravity changes, speed variations and variations of the tunnel width.
-- [ ] Develop an adaptive mechanism for level generation of obstacles
-- [x] Keep a counter for the cumulative score
-- [x] Allow objects to accelerate (possibly at the end of the level)
-- [ ] Generate levels from a database but adapt the obstacles according to the gameplay. 
-- [x] The only controls available are `up` and `down`. 
-- [ ] If the player hits the obstactles, it can result in points penalty, or sudden game over. 
-- [ ] Experiment with different obstacle geometries (rounded ones would be easier, I suspect)
-- [ ] Play with light conditions (the closer we are to lightsource the slower we move)
-
 
 ## Usage
 
@@ -50,6 +35,18 @@ As Douglas Horton once said:
 git clone https://github.com/Alfo5123/Tunnel.git
 cd Tunnel 
 ```
+
+## Improvements
+- [x] Measure episodic entropy of wasp.
+- [ ] Include a health-bar for number of left honey points.
+- [ ] Develop an adaptive mechanism for level generation of obstacles based on gameplay.
+- [x] Keep a counter for the cumulative score.
+- [x] Allow objects to accelerate (specially at the end of the level).
+- [x] The only controls available are `up` and `down`. 
+- [ ] Experiment with different obstacle geometries (rounded ones would be easier, perhaps).
+- [ ] Play with light conditions (the closer we are to lightsource the slower we move).
+- [x] Add addictive musical background. 
+- [ ] Display simple instructions.
 
 ## Licenses
 Audio: [Omniworld](https://soundcloud.com/djviofficial/djvi-omniworld-1) by DJVI / [CC BY](https://creativecommons.org/licenses/by-nc-sa/3.0/)
