@@ -33,6 +33,9 @@ var extra = ( screenHeight - scoreHeight - wasp.offsetHeight ) % stepSize
 // Set game variables
 var score;
 var gameoff = true ;
+var levelPoints = 20 ; 
+var totalPoints = 30;
+var entropyEpisode = 30 ; 
 //localStorage.getItem('highscore')
 
 // Keep track of position distribution
@@ -103,6 +106,14 @@ function EntropyCalculation( postDist, num )
   return postDist.reduceRight(logTerm) / num ;
 }
 
+// Adaptive speed 
+function speedGain( entropy )
+{
+	if (entropy < 0.7 * Math.log(entropyEpisode) ){
+		return 2
+	}
+	return 0
+}
 // Create obstacles / points
 function makeDiv(id, text, cl) 
 {
@@ -258,8 +269,13 @@ function gameLoop()
   var i = 0; // to keep track of time
   var j = 0; // to keep track of entropy calculation time
   var speed = 0; // to keep track of objects velocity
+  var leftPoints = totalPoints ; // to keep track of how many honeys are left in tunnel
   loop = setInterval(function() 
   {
+
+  	// Display available honey points
+  	levelCounter.innerHTML = "Honey " + leftPoints
+
     // Current wasp coordiantes
     curX = wasp.offsetLeft;
     curY = wasp.offsetTop;
@@ -280,7 +296,7 @@ function gameLoop()
     i++;
     for (x = 0; x < objects.length; x++) {
       // Smooth accerleration depending on current_level
-      objects[x].style.left = objects[x].offsetLeft - (5*(Math.floor(current_level/5)+1) + speed) + "px";
+      objects[x].style.left = objects[x].offsetLeft - (5*(Math.floor(current_level/5)+1) + speed + speedGain(entropy)) + "px";
 
       // when objects colide with wasp
       if (collided(objects[x], wasp) == "hit"  ) {
@@ -292,10 +308,10 @@ function gameLoop()
         else{
           // keep playing to add points
           document.body.removeChild(objects[x]);
-          score = score + 5 ;
+          score = score + 1 ;
           scoreCounter.innerHTML = score;
 
-          if (score == 60){ // if maximum score is achieve in level, move to next level
+          if (score == levelPoints){ // if maximum score is achieve in level, move to next level
             current_level = current_level + 1 ;
             j = 0 , postDist = new Array( positions ).fill(0) // restart frequencies 
             gameEnd(defeat = false);
@@ -305,6 +321,10 @@ function gameLoop()
       }
       //remove unseen objects
       if (objects[x].offsetLeft < 0) {
+
+      	if (objects[x].className == "object point" &&  leftPoints <= 0 ){  // check if no more points left to play
+      		gameEnd(defeat = true);
+      	}
         document.body.removeChild(objects[x]);
       }
     }
@@ -323,18 +343,22 @@ function gameLoop()
       postDist[ (curY - scoreHeight) / stepSize ] += 1
       j += 1
 
-      // Entropy calculation each 5 seconds
-      if( j == 15){
+      // Entropy calculation each 10 seconds
+      if( j == entropyEpisode){
         entropy = EntropyCalculation( postDist , j )
         console.log(entropy)
         j = 0 , postDist = new Array( positions ).fill(0) // restart frequencies 
       }
 
       if (i % 3 == 0 ){
-        // Points
-        makeDiv("id", "", "object point");
+        // Points (Honey)
+        if (leftPoints > 0){
+        	makeDiv("id", "", "object point");
+        }
+        leftPoints -= 1;
+
       } else {
-        //Enemies
+        //Enemies (Obstacles)
         makeDiv("id", "", "object enemy")
       }
     }
