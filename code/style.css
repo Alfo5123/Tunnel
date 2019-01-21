@@ -1,4 +1,9 @@
+/*
 
+Tunnel 
+by Alfredo de la Fuente <alfredo.delafuente.b@gmail.com>
+
+*/
 #wasp {
   background-image: url("images/wasp40.png");
   width: 40px;
@@ -112,21 +117,6 @@ body {
   background-color: #000000;
   width: 100%;*/
 }
-
-#level{
-  text-align: center;
-  font-size: 3em;
-  font-family: 'Lato', sans-serif;
-  color: #000;
-  font-weight: bold;
-  padding: 10px;
-  z-index: 1;
-  position: absolute;
-  /*height: 56px;*/
-  background-color: #FFF;
-  width: 30%;*/
-}
-
 #highscore{
   z-index: 150;
   color: #020202;

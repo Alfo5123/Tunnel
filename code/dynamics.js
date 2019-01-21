@@ -1,7 +1,13 @@
-//vars
+/*
+
+Tunnel 
+by Alfredo de la Fuente <alfredo.delafuente.b@gmail.com>
+
+*/
+
+//global variables
 var wasp = document.getElementById("wasp");
 var scoreCounter = document.getElementById("score");
-var levelCounter = document.getElementById("level");
 var objects = document.getElementsByClassName("object");
 var ui = document.getElementById("ui");
 var uiText = document.getElementById("text");
@@ -21,10 +27,6 @@ var screenWidth = window.innerWidth;
 var screenHeight = window.innerHeight;
 var scoreHeight = scoreCounter.offsetHeight;
 
-// Start level counter
-levelCounter.style.visibility = "hidden";
-var current_level = 1 ;
-
 // Define step size for movement
 var numSteps = 100; // Based on the size of the full screen
 var stepSize = Math.round(screenHeight / numSteps) 
@@ -33,9 +35,7 @@ var extra = ( screenHeight - scoreHeight - wasp.offsetHeight ) % stepSize
 // Set game variables
 var score;
 var gameoff = true ;
-var levelPoints = 20 ; 
-var totalPoints = 30;
-var entropyEpisode = 30 ; 
+var entropyEpisode = 15 ; 
 //localStorage.getItem('highscore')
 
 // Keep track of position distribution
@@ -106,13 +106,10 @@ function EntropyCalculation( postDist, num )
   return postDist.reduceRight(logTerm) / num ;
 }
 
-// Adaptive speed 
-function speedGain( entropy )
+// Verify entropy minimum requirement
+function enoughEntropy( entropy )
 {
-	if (entropy < 0.7 * Math.log(entropyEpisode) ){
-		return 2
-	}
-	return 0
+	return (entropy > 0.65 * Math.log(entropyEpisode) )
 }
 // Create obstacles / points
 function makeDiv(id, text, cl) 
@@ -123,7 +120,7 @@ function makeDiv(id, text, cl)
   el.id = id;
   el.className = cl;
   document.body.appendChild(el);
-  el.style.top = ( Math.floor(Math.random() * ( screenHeight - scoreHeight) ) + scoreHeight ) + "px"; // Only considers the center coordinates
+  el.style.top = ( Math.floor(Math.random() * ( screenHeight - scoreHeight - el.offsetHeight ) ) + scoreHeight ) + "px"; // Only considers the center coordinates
   el.style.left = screenWidth + "px";
 }
 
@@ -147,20 +144,11 @@ function uiSet(state) {
     uiText.innerHTML = "GAME OVER";
     highscoreHolder.style.display = "block"
   }
-  if (state == "win") {
-    ui.style.display = "block";
-    playButton.innerHTML = "Level " + current_level;
-    uiScore.innerHTML = "Score: " + score;
-    uiText.style.fontSize = (screenHeight / 200) + 'em';
-    uiText.innerHTML = "You Won!";
-    highscoreHolder.style.display = "block"
-  }
   if (state == "none") {
     ui.style.display = "none";
     highscoreHolder.style.display = "none";
     scoreCounter.style.visibility = "visible";
     scoreCounter.style.display = "block";
-    levelCounter.style.visibility = "visible";
     wasp.style.display = "block";
   }
 }
@@ -199,14 +187,11 @@ function gameStart() {
   put(wasp.offsetLeft, scoreHeight, wasp)
   gameLoop();
   scoreCounter.innerHTML = "0"; // Reset counter
-  levelCounter.innerHTML = "Level " + current_level
-  
 }
 
 //game end
 function gameEnd(defeat = true) {
 
-  levelCounter.style.visibility = "hidden";
   scoreCounter.style.visibility = "hidden";
 
   // Set screen depending on result
@@ -269,12 +254,10 @@ function gameLoop()
   var i = 0; // to keep track of time
   var j = 0; // to keep track of entropy calculation time
   var speed = 0; // to keep track of objects velocity
-  var leftPoints = totalPoints ; // to keep track of how many honeys are left in tunnel
+  var proportion = 2 ; // proportion of obstacles and points
+
   loop = setInterval(function() 
   {
-
-  	// Display available honey points
-  	levelCounter.innerHTML = "Honey " + leftPoints
 
     // Current wasp coordiantes
     curX = wasp.offsetLeft;
@@ -295,13 +278,12 @@ function gameLoop()
 
     i++;
     for (x = 0; x < objects.length; x++) {
-      // Smooth accerleration depending on current_level
-      objects[x].style.left = objects[x].offsetLeft - (5*(Math.floor(current_level/5)+1) + speed + speedGain(entropy)) + "px";
+      // Smooth accerleration
+      objects[x].style.left = objects[x].offsetLeft - (5 + speed ) + "px";
 
       // when objects colide with wasp
       if (collided(objects[x], wasp) == "hit"  ) {
         if (objects[x].className == "object enemy") {
-          current_level = 1;
           j = 0 , postDist = new Array( positions ).fill(0) // restart frequencies 
           gameEnd(defeat = true);
         }
@@ -310,29 +292,19 @@ function gameLoop()
           document.body.removeChild(objects[x]);
           score = score + 1 ;
           scoreCounter.innerHTML = score;
-
-          if (score == levelPoints){ // if maximum score is achieve in level, move to next level
-            current_level = current_level + 1 ;
-            j = 0 , postDist = new Array( positions ).fill(0) // restart frequencies 
-            gameEnd(defeat = false);
-          }
           //document.body.style.backgroundColor =  'rgba(135,93,61,' + (1-0.7*score/60) + ')';
         }
       }
       //remove unseen objects
       if (objects[x].offsetLeft < 0) {
-
-      	if (objects[x].className == "object point" &&  leftPoints <= 0 ){  // check if no more points left to play
-      		gameEnd(defeat = true);
-      	}
-        document.body.removeChild(objects[x]);
+      	document.body.removeChild(objects[x]);
       }
     }
 
-    //accelerate objects every second
-    if (i == 60) {
+    //accelerate objects every 2 seconds
+    if (i == 120) {
       i = 0;
-      if (speed < 35) {
+      if (speed < 20) {
         speed = speed + 1;
       }
     }
@@ -343,24 +315,26 @@ function gameLoop()
       postDist[ (curY - scoreHeight) / stepSize ] += 1
       j += 1
 
-      // Entropy calculation each 10 seconds
+      // Entropy calculation each 5 seconds
       if( j == entropyEpisode){
         entropy = EntropyCalculation( postDist , j )
-        console.log(entropy)
-        j = 0 , postDist = new Array( positions ).fill(0) // restart frequencies 
+        
+        // Manipulate density of obstacles based on rew
+	    proportion += enoughEntropy(entropy) ? -2 : 1 ;
+	    if ( proportion < 2 ) proportion = 2 ;
+		
+		// restart frequencies
+        j = 0 , postDist = new Array( positions ).fill(0) 
       }
 
-      if (i % 3 == 0 ){
+      if (i % proportion == 0 ){
         // Points (Honey)
-        if (leftPoints > 0){
-        	makeDiv("id", "", "object point");
-        }
-        leftPoints -= 1;
-
+        makeDiv("id", "", "object point");
       } else {
         //Enemies (Obstacles)
         makeDiv("id", "", "object enemy")
       }
+
     }
 
   }, 16);
