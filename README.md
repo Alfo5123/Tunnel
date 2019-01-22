@@ -2,9 +2,9 @@
 
 ## Table of content
 - [Description](#description)
-- [Authors](#authors)
 - [Usage](#usage)
 - [Improvements](#improvements)
+- [Acknowledgements](#acknowledgements)
 - [License](#licenses)
 
 ## Description 
@@ -21,11 +21,6 @@ As Douglas Horton once said:
 
 > “The art of simplicity is a puzzle of complexity.” 
 
-## Authors
-
- - [Alfredo de la Fuente](https://alfo5123.github.io/)
- - [Sushanti Prabhu](https://www.facebook.com/sushanti.prabhu)
-
 ## Usage
 
 ```
@@ -35,15 +30,16 @@ cd Tunnel
 
 ## Improvements
 - [x] Measure episodic entropy of wasp.
-- [ ] Include a health-bar for number of left honey points.
-- [ ] Develop an adaptive mechanism for level generation of obstacles based on gameplay.
+- [x] Develop an adaptive mechanism for level generation of obstacles based on gameplay.
 - [x] Keep a counter for the cumulative score.
 - [x] Allow objects to accelerate (specially at the end of the level).
 - [x] The only controls available are `up` and `down`. 
 - [ ] Experiment with different obstacle geometries (rounded ones would be easier, perhaps).
-- [ ] Play with light conditions (the closer we are to lightsource the slower we move).
 - [x] Add addictive musical background. 
 - [ ] Display simple instructions.
+
+## Acknowledgements
+Special thanks to [Sushanti Prabhu](https://github.com/sushanti) and [Gerson Lazaro](https://github.com/GersonLazaro) for their ideas and technical contributions. 
 
 ## Licenses
 Audio: [Omniworld](https://soundcloud.com/djviofficial/djvi-omniworld-1) by DJVI / [CC BY](https://creativecommons.org/licenses/by-nc-sa/3.0/)
