@@ -106,19 +106,44 @@ function EntropyCalculation( postDist, num )
   return postDist.reduceRight(logTerm) / num ;
 }
 
+// Linear interpolation between two hex code colors
+function colorInterpolation( hex1, hex2, alpha)
+{
+	match1 = hex1.replace(/#/,'').match(/.{1,2}/g);
+	r1 =parseInt(match1[0], 16); g1 = parseInt(match1[1], 16); b1 = parseInt(match1[2], 16);
+
+	match2 = hex2.replace(/#/,'').match(/.{1,2}/g);
+	r2 =parseInt(match2[0], 16); g2 = parseInt(match2[1], 16); b2 = parseInt(match2[2], 16);
+
+	new_r = Math.round((r2 - r1 )*alpha + r1);
+	new_g = Math.round((g2 - g1 )*alpha + g1);
+	new_b = Math.round((b2 - b1 )*alpha + b1);
+	return "rgb("+new_r+", "+ new_g+", "+new_b+")"
+}
+
 // Verify entropy minimum requirement
-function enoughEntropy( entropy )
+function notLazy( entropy )
 {
 	return (entropy > 0.65 * Math.log(entropyEpisode) )
 }
 // Create obstacles / points
-function makeDiv(id, text, cl) 
+function makeDiv(id, text, cl, proportion = 2) 
 {
   var el;
   el = document.createElement("div");
   el.innerHTML = text;
   el.id = id;
   el.className = cl;
+  
+  // adapt size and color of obstacles according to gameplay
+  if (cl == "object enemy" && proportion > 2)
+  {
+  	el.style.width = ( 30 + 5*(proportion-2) ) + "px";
+	el.style.height = ( 30 + 5*(proportion-2) ) + "px";
+	new_color = colorInterpolation("#99cc33","800000",1-Math.pow(0.83,proportion))
+	el.style.background = "radial-gradient(circle at 30px 30px," + new_color + ", #000)";
+  }
+ 
   document.body.appendChild(el);
   el.style.top = ( Math.floor(Math.random() * ( screenHeight - scoreHeight - el.offsetHeight ) ) + scoreHeight ) + "px"; // Only considers the center coordinates
   el.style.left = screenWidth + "px";
@@ -320,7 +345,7 @@ function gameLoop()
         entropy = EntropyCalculation( postDist , j )
         
         // Manipulate density of obstacles based on rew
-	    proportion += enoughEntropy(entropy) ? -2 : 1 ;
+	    proportion += notLazy(entropy) ? -2 : 1 ;
 	    if ( proportion < 2 ) proportion = 2 ;
 		
 		// restart frequencies
@@ -332,7 +357,7 @@ function gameLoop()
         makeDiv("id", "", "object point");
       } else {
         //Enemies (Obstacles)
-        makeDiv("id", "", "object enemy")
+        makeDiv("id", "", "object enemy",proportion)
       }
 
     }
